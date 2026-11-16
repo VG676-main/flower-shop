@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="office">
+  <div class="office-nav">
+    <a href="{{ url_for('admin_products') }}">Букеты</a>
+    <a href="{{ url_for('admin_orders') }}">Заказы</a>
+    <a href="{{ url_for('home') }}">На витрину</a>
+    <form method="post" action="{{ url_for('logout') }}">
+      <input type="hidden" name="csrf" value="{{ csrf }}" />
+      <button type="submit">Выйти</button>
+    </form>
+  </div>
+  {% block office %}{% endblock %}
+</section>
+{% endblock %}

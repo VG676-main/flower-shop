@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Заказ принят — {{ shop.name }}{% endblock %}
+{% block body %}
+<section class="sheet">
+  <h1>Заказ принят</h1>
+  {% if order %}
+    <p>Флорист видит это в кабинете. Оплата при получении.</p>
+    <pre class="receipt">Заказ «{{ shop.name }}» №{{ order.id }}
+Имя: {{ order.customer_name }}
+Телефон: {{ order.phone }}
+{% if order.recipient %}Получатель: {{ order.recipient }}
+{% endif %}Доставка: {{ zone_name }}
+{% if order.address %}Адрес: {{ order.address }}
+{% endif %}Когда: {{ order.delivery_date }}, {{ order.slot }}
+
+{% for item in items %}{{ item.qty }} × {{ item.product_name }} — {{ (item.price * item.qty)|rub }}
+{% endfor %}{% if order.discount %}Скидка: −{{ order.discount|rub }}
+{% endif %}Доставка: {{ order.delivery_price|rub }}
+Итого: {{ order.total|rub }}
+{% if order.card_text %}
+Открытка: {{ order.card_text }}{% endif %}
+{% if order.comment %}Комментарий: {{ order.comment }}{% endif %}</pre>
+  {% else %}
+    <p>Если это был ваш заказ, откройте страницу сразу после оформления. Повторно чужой заказ здесь не показывается.</p>
+  {% endif %}
+  <a class="btn" href="{{ url_for('home') }}">На витрину</a>
+</section>
+{% endblock %}

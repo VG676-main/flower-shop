@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Корзина — {{ shop.name }}{% endblock %}
+{% block body %}
+<section class="sheet">
+  <h1>Корзина</h1>
+  {% if not lines %}
+    <p>Пока пусто. На витрине можно выбрать букет.</p>
+    <a class="btn" href="{{ url_for('home') }}#catalog">К витрине</a>
+  {% else %}
+    <div class="lines">
+      {% for line in lines %}
+        <div class="cart-item">
+          <div>
+            <strong>{{ line.product.name }}</strong>
+            <span class="muted">{{ line.product.price|rub }}</span>
+          </div>
+          <div class="qty">
+            <form method="post" action="{{ url_for('cart_qty') }}">
+              <input type="hidden" name="csrf" value="{{ csrf }}" />
+              <input type="hidden" name="product_id" value="{{ line.product.id }}" />
+              <input type="hidden" name="qty" value="{{ line.qty - 1 }}" />
+              <button type="submit" aria-label="Меньше">−</button>
+            </form>
+            <span>{{ line.qty }}</span>
+            <form method="post" action="{{ url_for('cart_qty') }}">
+              <input type="hidden" name="csrf" value="{{ csrf }}" />
+              <input type="hidden" name="product_id" value="{{ line.product.id }}" />
+              <input type="hidden" name="qty" value="{{ line.qty + 1 }}" />
+              <button type="submit" aria-label="Больше">+</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if errors %}
+      <div class="errors">
+        {% for error in errors %}<p>{{ error }}</p>{% endfor %}
+      </div>
+    {% endif %}
+
+    <form id="checkout" method="post" action="{{ url_for('checkout') }}" data-goods="{{ preview.goods }}" data-promo="{{ promo_code }}">
+      <input type="hidden" name="csrf" value="{{ csrf }}" />
+      <label class="field"><span>Ваше имя</span><input name="name" required maxlength="80" value="{{ form.name or '' }}" autocomplete="name" /></label>
+      <label class="field"><span>Телефон</span><input name="phone" required maxlength="20" value="{{ form.phone or '' }}" inputmode="tel" autocomplete="tel" placeholder="+7 900 000-00-00" /></label>
+      <label class="field"><span>Имя получателя</span><input name="recipient" maxlength="80" value="{{ form.recipient or '' }}" /></label>
+      <label class="field"><span>Зона доставки</span>
+        <select name="zone">
+          {% for key, title, price in zones %}
+            <option value="{{ key }}" data-price="{{ price }}" {% if (form.zone or 'center') == key %}selected{% endif %}>{{ title }} — {{ price|rub }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label class="field"><span>Адрес</span><input name="address" maxlength="200" value="{{ form.address or '' }}" autocomplete="street-address" placeholder="Улица, дом, квартира. Для самовывоза можно не заполнять" /></label>
+      <label class="field"><span>Дата</span><input name="delivery_date" type="date" required min="{{ today }}" value="{{ form.delivery_date or today }}" /></label>
+      <label class="field"><span>Интервал</span>
+        <select name="slot">
+          {% for label, extra in slots %}
+            <option value="{{ label }}" data-extra="{{ extra }}" {% if (form.slot or '13:00–16:00') == label %}selected{% endif %}>{{ label }}{% if extra %} · +{{ extra|rub }}{% endif %}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label class="field"><span>Текст открытки</span><textarea name="card_text" maxlength="200" rows="3">{{ form.card_text or '' }}</textarea></label>
+      <label class="field"><span>Комментарий флористу</span><textarea name="comment" maxlength="300" rows="3">{{ form.comment or '' }}</textarea></label>
+      <label class="field"><span>Промокод</span><input name="promo" maxlength="20" value="{{ form.promo or '' }}" placeholder="{{ promo_code }}" /></label>
+      <div class="totals">
+        <div class="sum-row"><span>Букеты</span><span id="sum-goods">{{ preview.goods|rub }}</span></div>
+        <div class="sum-row" id="sum-discount-row" hidden><span>Скидка 10%</span><span id="sum-discount">0 ₽</span></div>
+        <div class="sum-row"><span>Доставка</span><span id="sum-delivery">{{ preview.delivery|rub }}</span></div>
+        <div class="sum-row"><span>Итого</span><span id="sum-total">{{ preview.total|rub }}</span></div>
+      </div>
+      <button class="btn wide" type="submit">Оформить заказ</button>
+    </form>
+  {% endif %}
+</section>
+{% endblock %}
+{% block scripts %}{% if lines %}<script src="{{ url_for('static', filename='cart.js') }}"></script>{% endif %}{% endblock %}

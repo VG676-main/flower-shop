@@ -1,0 +1,27 @@
+{% extends "admin_base.html" %}
+{% block title %}{% if product and product.id %}Изменить букет{% else %}Новый букет{% endif %} — {{ shop.name }}{% endblock %}
+{% block office %}
+<h1>{% if product and product.id %}Изменить букет{% else %}Новый букет{% endif %}</h1>
+{% if errors %}
+  <div class="errors">{% for error in errors %}<p>{{ error }}</p>{% endfor %}</div>
+{% endif %}
+<form class="product-form" method="post" enctype="multipart/form-data" action="{% if product and product.id %}{{ url_for('product_update', product_id=product.id) }}{% else %}{{ url_for('product_create') }}{% endif %}">
+  <input type="hidden" name="csrf" value="{{ csrf }}" />
+  {% if product and product.image %}
+    <img class="preview" src="{{ url_for('media', name=product.image) }}" alt="" />
+  {% endif %}
+  <label class="field"><span>Название</span><input name="name" required maxlength="80" value="{{ product.name if product else '' }}" /></label>
+  <label class="field"><span>Категория</span>
+    <select name="category">
+      {% for key, title in categories %}
+        <option value="{{ key }}" {% if product and product.category == key %}selected{% endif %}>{{ title }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label class="field"><span>Цена, ₽</span><input name="price" required inputmode="numeric" value="{{ product.price if product else '' }}" /></label>
+  <label class="field"><span>Размер</span><input name="size" required maxlength="40" placeholder="M или 15 шт." value="{{ product.size if product else '' }}" /></label>
+  <label class="field"><span>Описание</span><textarea name="description" required maxlength="500" rows="4">{{ product.description if product else '' }}</textarea></label>
+  <label class="field"><span>Фотография</span><input name="image" type="file" accept=".jpg,.jpeg,.png,.webp" {% if not product or not product.id %}required{% endif %} /></label>
+  <button class="btn" type="submit">Сохранить</button>
+</form>
+{% endblock %}

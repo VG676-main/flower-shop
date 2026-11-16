@@ -1,0 +1,32 @@
+{% extends "admin_base.html" %}
+{% block title %}Букеты — кабинет {{ shop.name }}{% endblock %}
+{% block office %}
+<div class="section-head">
+  <h1>Букеты</h1>
+  <a class="btn" href="{{ url_for('product_new') }}">Добавить букет</a>
+</div>
+{% if products %}
+  <div class="admin-grid">
+    {% for product in products %}
+      <article class="admin-card">
+        <a class="photo" href="{{ url_for('product_edit', product_id=product.id) }}">
+          {% if product.image %}<img src="{{ url_for('media', name=product.image) }}" alt="" />{% endif %}
+        </a>
+        <div>
+          <h2>{{ product.name }}</h2>
+          <p>{{ product.price|rub }} · {{ product.size }} · {{ category_name(product.category) }}</p>
+          <div class="row-actions">
+            <a href="{{ url_for('product_edit', product_id=product.id) }}">Изменить</a>
+            <form method="post" action="{{ url_for('product_delete', product_id=product.id) }}">
+              <input type="hidden" name="csrf" value="{{ csrf }}" />
+              <button type="submit">Удалить</button>
+            </form>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+{% else %}
+  <p>Витрина пустая. Добавьте первый букет.</p>
+{% endif %}
+{% endblock %}

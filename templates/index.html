@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">Цветочный магазин</p>
+    <h1>Букет, который не выглядит случайным</h1>
+    <p class="lead">Свежие цветы, открытка своим текстом и доставка ко времени. Заказ сразу виден флористу: состав, адрес и пожелания.</p>
+    <div class="hero-actions">
+      <a class="btn" href="#catalog">Смотреть витрину</a>
+      <a class="btn btn-ghost" href="{{ url_for('cart_page') }}">Открыть корзину</a>
+    </div>
+    <ul class="hero-points">
+      <li>Сборка в день заказа</li>
+      <li>Фото букета перед выездом</li>
+      <li>Оплата при получении</li>
+    </ul>
+  </div>
+  <figure class="hero-photo">
+    <img src="{{ url_for('media', name='hero.jpg') }}" alt="Сборный букет с розами и эвкалиптом" />
+  </figure>
+</section>
+
+<section class="catalog" id="catalog">
+  <div class="section-head">
+    <div>
+      <h2>Витрина</h2>
+      <p>Букеты магазин добавляет и убирает сам, из своего кабинета.</p>
+    </div>
+    <form class="search" method="get" action="{{ url_for('home') }}">
+      <input type="hidden" name="category" value="{{ category }}" />
+      <label>
+        <span class="sr">Найти букет</span>
+        <input type="search" name="q" value="{{ query }}" placeholder="Найти: розы, тюльпаны, сердце" />
+      </label>
+    </form>
+  </div>
+  <div class="filters">
+    <a class="{% if category == 'all' %}is-on{% endif %}" href="{{ url_for('home', q=query) }}">Все · {{ counts.all }}</a>
+    {% for key, title in categories %}
+      <a class="{% if category == key %}is-on{% endif %}" href="{{ url_for('home', category=key, q=query) }}">{{ title }} · {{ counts[key] }}</a>
+    {% endfor %}
+  </div>
+  {% if products %}
+    <div class="grid">
+      {% for product in products %}
+        <article class="card">
+          <a class="photo" href="{{ url_for('product', product_id=product.id) }}">
+            {% if product.image %}<img src="{{ url_for('media', name=product.image) }}" alt="{{ product.name }}" />{% endif %}
+          </a>
+          <div class="card-body">
+            <h3><a href="{{ url_for('product', product_id=product.id) }}">{{ product.name }}</a></h3>
+            <p>{{ product.description }}</p>
+            <div class="card-row">
+              <span class="price">{{ product.price|rub }}</span>
+              <span class="size">{{ product.size }}</span>
+            </div>
+            <form method="post" action="{{ url_for('cart_add') }}">
+              <input type="hidden" name="csrf" value="{{ csrf }}" />
+              <input type="hidden" name="product_id" value="{{ product.id }}" />
+              <input type="hidden" name="qty" value="1" />
+              <button class="add" type="submit">В корзину</button>
+            </form>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="empty">Ничего не нашлось. Сбросьте фильтр или напишите пожелание в комментарии к заказу.</p>
+  {% endif %}
+</section>
+
+<section class="split" id="delivery">
+  <div>
+    <h2>Доставка</h2>
+    <p>Курьер привозит букет в выбранный интервал. Если нужного цветка нет, флорист пишет до замены, а не везёт другой без спроса.</p>
+  </div>
+  <dl class="zones">
+    {% for key, title, price in zones %}
+      <div><dt>{{ title }}</dt><dd>{{ price|rub }}</dd></div>
+    {% endfor %}
+    <div><dt>После 19:00</dt><dd>+400 ₽</dd></div>
+  </dl>
+</section>
+
+<section class="split">
+  <div>
+    <h2>Магазин</h2>
+    <p>{{ shop.name }} в городе {{ shop.city }}. Букеты собирают в магазине и привозят в выбранный интервал.</p>
+    <p><a href="tel:{{ shop.phone_tel }}">{{ shop.phone }}</a></p>
+    <p>{{ shop.address }}</p>
+    <p>{{ shop.hours }}</p>
+  </div>
+  <ol class="steps">
+    <li>Выбираете букет, дату и интервал.</li>
+    <li>Оставляете телефон, адрес и текст открытки.</li>
+    <li>Заказ сохраняется, флорист видит его в кабинете.</li>
+    <li>Курьер привозит. Оплата при получении.</li>
+  </ol>
+</section>
+{% endblock %}

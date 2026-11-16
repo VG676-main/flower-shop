@@ -1,0 +1,18 @@
+{% extends "admin_base.html" %}
+{% block title %}Заказы — кабинет {{ shop.name }}{% endblock %}
+{% block office %}
+<h1>Заказы</h1>
+{% if orders %}
+  <div class="order-list">
+    {% for order in orders %}
+      <a class="order-card" href="{{ url_for('admin_order', order_id=order.id) }}">
+        <strong>№{{ order.id }} · {{ order.customer_name }}</strong>
+        <span>{{ order.total|rub }}</span>
+        <p>{{ order.delivery_date }} · {{ order.slot }} · {{ status_name(order.status) }}</p>
+      </a>
+    {% endfor %}
+  </div>
+{% else %}
+  <p>Заказов пока нет. Оформите пробный с витрины — он появится здесь.</p>
+{% endif %}
+{% endblock %}

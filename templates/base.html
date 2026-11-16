@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}{{ shop.name }} — цветочный магазин{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}?v=3" />
+</head>
+<body>
+  <p class="topline">Доставка в день заказа. Сборка по городу — до 18:00.</p>
+  <header class="head">
+    <a class="logo" href="{{ url_for('home') }}">{{ shop.name }}</a>
+    <nav class="nav">
+      <a href="{{ url_for('home') }}#catalog">Витрина</a>
+      <a href="{{ url_for('home') }}#delivery">Доставка</a>
+    </nav>
+    <a class="cart-btn" href="{{ url_for('cart_page') }}">Корзина <span>{{ cart_count }}</span></a>
+    <details class="menu">
+      <summary>Меню</summary>
+      <a href="{{ url_for('home') }}#catalog">Витрина</a>
+      <a href="{{ url_for('home') }}#delivery">Доставка</a>
+      <a href="{{ url_for('cart_page') }}">Корзина · {{ cart_count }}</a>
+    </details>
+  </header>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="flashes">
+        {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+  <main>{% block body %}{% endblock %}</main>
+  <footer class="foot">
+    <p>Пример сайта для цветочного магазина. Название, телефон, цены и фотографии ставятся ваши.</p>
+    <a href="{{ url_for('login') }}">Кабинет магазина</a>
+  </footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,31 @@
+{% extends "admin_base.html" %}
+{% block title %}Заказ №{{ order.id }} — {{ shop.name }}{% endblock %}
+{% block office %}
+<p class="eyebrow">Заказ №{{ order.id }}</p>
+<h1>{{ order.customer_name }}</h1>
+<p><a href="tel:{{ order.phone }}">{{ order.phone }}</a></p>
+<dl class="facts">
+  <div><dt>Когда</dt><dd>{{ order.delivery_date }}, {{ order.slot }}</dd></div>
+  <div><dt>Куда</dt><dd>{{ zone_name }}{% if order.address %} · {{ order.address }}{% endif %}</dd></div>
+  {% if order.recipient %}<div><dt>Получатель</dt><dd>{{ order.recipient }}</dd></div>{% endif %}
+  {% if order.card_text %}<div><dt>Открытка</dt><dd>{{ order.card_text }}</dd></div>{% endif %}
+  {% if order.comment %}<div><dt>Комментарий</dt><dd>{{ order.comment }}</dd></div>{% endif %}
+</dl>
+<ul class="plain">
+  {% for item in items %}
+    <li>{{ item.qty }} × {{ item.product_name }} — {{ (item.price * item.qty)|rub }}</li>
+  {% endfor %}
+</ul>
+<p class="price big">Итого {{ order.total|rub }}</p>
+<form method="post" action="{{ url_for('order_status', order_id=order.id) }}" class="status-form">
+  <input type="hidden" name="csrf" value="{{ csrf }}" />
+  <label class="field"><span>Статус</span>
+    <select name="status">
+      {% for key, title in statuses %}
+        <option value="{{ key }}" {% if order.status == key %}selected{% endif %}>{{ title }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <button class="btn" type="submit">Сохранить статус</button>
+</form>
+{% endblock %}

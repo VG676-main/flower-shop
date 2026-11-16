@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Вход для магазина — {{ shop.name }}{% endblock %}
+{% block body %}
+<section class="sheet narrow">
+  <h1>Кабинет магазина</h1>
+  <p class="muted">Здесь добавляют букеты, меняют цены и смотрят заказы. Для примера вход уже создан.</p>
+  <form method="post" action="{{ url_for('login_post') }}">
+    <input type="hidden" name="csrf" value="{{ csrf }}" />
+    <label class="field"><span>Имя</span><input name="username" required autocomplete="username" value="florist" /></label>
+    <label class="field"><span>Пароль</span><input name="password" type="password" required autocomplete="current-password" /></label>
+    <button class="btn wide" type="submit">Войти</button>
+  </form>
+  <p class="demo-note">Пример: имя <strong>florist</strong>, пароль <strong>pole-demo</strong>. Перед настоящим запуском пароль меняют.</p>
+</section>
+{% endblock %}

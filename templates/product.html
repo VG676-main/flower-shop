@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} — {{ shop.name }}{% endblock %}
+{% block body %}
+<article class="product">
+  <figure>
+    {% if product.image %}<img src="{{ url_for('media', name=product.image) }}" alt="{{ product.name }}" />{% endif %}
+  </figure>
+  <div>
+    <p class="eyebrow">{{ category_name(product.category) }}</p>
+    <h1>{{ product.name }}</h1>
+    <p class="lead">{{ product.description }}</p>
+    <p class="price big">{{ product.price|rub }} · {{ product.size }}</p>
+    <form method="post" action="{{ url_for('cart_add') }}" class="qty-form">
+      <input type="hidden" name="csrf" value="{{ csrf }}" />
+      <input type="hidden" name="product_id" value="{{ product.id }}" />
+      <label>Количество <input type="number" name="qty" min="1" max="20" value="1" /></label>
+      <button class="btn" type="submit">В корзину</button>
+    </form>
+    <p class="muted">Состав на фото — ориентир. Если цветка нет, флорист согласует замену до сборки.</p>
+  </div>
+</article>
+{% endblock %}

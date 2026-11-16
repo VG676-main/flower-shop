@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} — {{ shop.name }}{% endblock %}
+{% block body %}
+<section class="sheet narrow">
+  <h1>{{ title }}</h1>
+  <p>{{ text }}</p>
+  <a class="btn" href="{{ url_for('home') }}">На витрину</a>
+</section>
+{% endblock %}
